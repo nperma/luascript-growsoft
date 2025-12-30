@@ -1,0 +1,11 @@
+{
+  "Lua.workspace.library": ["./api"],
+  "Lua.diagnostics.globals": [
+    "registerLuaCommand",
+    "onPlayerCommandCallback",
+    "onPlayerDialogCallback",
+    "onAUtoSaveRequest",
+    "onPlayerBlessingClaimCallback",
+    "json"
+  ]
+}
