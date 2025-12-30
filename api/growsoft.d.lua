@@ -1,262 +1,223 @@
 ---@meta
---- GrowSoft / GTPS Cloud Luascript API Definitions
+--- GrowSoft / GTPS Cloud LuaScript API Definitions
 --- IntelliSense only (NOT executed)
 
------ Globals
+-- =========================================================
+-- DATA TYPES
+-- =========================================================
 
 ---@class CommandData
 ---@field command string
----@field description string 
----@field roleRequired number 
-local CommandData = {}
+---@field description string
+---@field roleRequired? number
 
---- Register a new Lua command
---- @usage
---- registerLuaCommand({command:"hello", description:"Says hello", roleRequired:0})
----@param commandData CommandData
-registerLuaCommand = function(commandData) end
+---@class EventData
+---@field id number
+---@field title string
+---@field description string
+---@field message string
 
----get World Object by WorldID
----@param worldID integer
----@return World
-function getWorld(worldID) end
+---@class SidebarButton
+---@field active boolean
+---@field buttonAction string
+---@field buttonTemplate string
+---@field counter number
+---@field counterMax number
+---@field itemIdIcon number
+---@field name string
+---@field order number
+---@field rcssClass string
+---@field text string
 
----get Item Object by ItemID
----@param itemID integer
----@return Item 
-function getItem(itemID) end
-
----get Higher Role Object by RoleID
----@return Role
-function getHighestPriorityRole() end
-
----get Roles List
----@return Role[]
-function getRoles() end
-
------ Role Object
-
----@class Role
----@field roleID number                          -- unique role ID
----@field rolePrice number                       -- role price
----@field roleName string                        -- role display name
----@field roleItemID number                      -- item ID associated with role
----@field textureName string                     -- texture file name
----@field textureXY string                       -- texture coordinates (e.g. "x,y")
----@field discordRoleID string                   -- Discord role ID
----@field roleDescription string                 -- role description text
----@field namePrefix string                      -- prefix before player name
----@field chatPrefix string                      -- prefix in chat
----@field dailyRewardDiamondLocksCount number    -- daily DL reward
----@field rolePriority number                    -- role priority (higher = stronger)
----@field computedFlags number                   -- internal computed flags (bitmask)
-local Role = {}
-
------ Item Object
-
----@class Item
-local Item = {}
-
----get item name
----@return string
-function Item:getName() end
-
---- get itemID
---- @return number
-function Item:getID() end
-
------ Tile Object
-
----@class Tile
-local Tile = {}
-
---- get tileID
----@return number
-function Tile:getTileID() end
-
------ Player Object
-
----@class Player
-local Player = {}
-
---- Get player role Object
----@return Role
-function Player:getRole() end
-
---- Print message to player's console
----
---- @example
---- player:onConsoleMessage("Hello World")
----
----@param text string
-function Player:onConsoleMessage(text) end
-
---- Show a talk bubble for a player
----
---- @example
---- player:onTalkBubble(player:getNetID(), "Hello!", 0)
----
----@param netID number
----@param text string
----@param condition number
-function Player:onTalkBubble(netID, text, condition) end
-
---- Get player name
----
---- @example
---- local name = player:getName()
----
----@return string
-function Player:getName() end
-
---- Get player IP address
----
---- @example
---- local ip = player:getIP()
----
----@return string
-function Player:getIP() end
-
---- Get player RID
----
---- @example
---- local rid = player:getRID()
----
----@return number
-function Player:getRID() end
-
---- Get player userID
----@return number
-function Player:getUserID() end
-
---- Get player NetID
----@return number
-function Player:getNetID() end
-
---- Dialog Showed
---- @param dialog_string string
-function Player:onDialogRequest(dialog_string) end
-
----Check Role
----@param roleID integer
----@return boolean
-function Player:hasRole(roleID) end
-
---- Check if the player has any active blessing
----
---- @example
---- if player:hasActiveBlessing() then
----   player:onConsoleMessage("Blessing active!")
---- end
----
----@return boolean
-function Player:hasActiveBlessing() end
-
---- Add a blessing to the player
----
---- @example
---- player:addBlessing("speed")
----
----@param name string
-function Player:addBlessing(name) end
-
------ World Object
-
----@class World
-local World = {}
-
----get world name
----@return string
-function World:getName() end
-
----get world lock tile object
----@return Tile|nil
-function World:getWorldLock() end
-
---- Get world type
----
---- @example
---- local type = world:getWorldType()
----
----@return string
-function World:getWorldType() end
-
---- Set world owner
----
---- @example
---- world:setOwner(player:getUserID())
----
----@param userID number
-function World:setOwner(userID) end
-
------ Callbacks
-
---- Player command callback
---- Fired when a player executes a command
----
---- @usage
---- onPlayerCommandCallback(function(world, player, message)
----   if message == "hello" then
----     player:onConsoleMessage("Hello " .. player:getName())
----     return true -- block default handler
----   end
----  return false
---- end)
----
----@param callback fun(world:World, player:Player, message:string): boolean|nil
-function onPlayerCommandCallback(callback) end
-
-
---- Player dialog callback
----
---- @usage
---- onPlayerDialogCallback(function(world, player, data)
----   player:onConsoleMessage("Dialog: " .. data)
---- end)
----
----@param callback fun(world: World, player: Player, data: string): boolean|nil
-function onPlayerDialogCallback(callback) end
-
-
----- Fired when a player claims a blessing
----
---- @usage
---- onPlayerBlessingClaimCallback(function(player)
----   player:onConsoleMessage("Blessing claimed!")
---- end)
----
----@param callback fun(player: Player)
-function onPlayerBlessingClaimCallback(callback) end
-
----comment
----@param callback fun(world: World, player: Player): any
-function onPlayerEnterWorldCallback(callback) end
-
---- Fired when a player claims a boost
----
---- @usage
---- onPlayerBoostClaimCallback(function(player)
----   player:onConsoleMessage("Boost activated!")
---- end)
----
----@param callback fun(player: Player)
-function onPlayerBoostClaimCallback(callback) end
-
---- Auto Update Data
----@param callback fun()
-function onAutoSaveRequest(callback) end
-
---- SAve Data String
---- @param key string
---- @param value string
-function saveStringToServer(key, value) end
-
---- Load Data String
---- @param key string
---- @return string
-function loadStringFromServer(key) end
+-- =========================================================
+-- GLOBAL UTILITIES
+-- =========================================================
 
 ---@class Json
 ---@field encode fun(value: any): string
 ---@field decode fun(text: string): any
-local Json = {}
+json = {}
+
+---@class Timer
+---@field setInterval fun(interval: number, callback: fun()): any
+---@field setTimeout fun(timeout: number, callback: fun()): any
+---@field clear fun(id: any): any
+timer = {}
+
+-- =========================================================
+-- ROLE
+-- =========================================================
+
+---@class Role
+---@field roleID number
+---@field rolePrice number
+---@field roleName string
+---@field roleItemID number
+---@field textureName string
+---@field textureXY string
+---@field discordRoleID string
+---@field roleDescription string
+---@field namePrefix string
+---@field chatPrefix string
+---@field dailyRewardDiamondLocksCount number
+---@field rolePriority number
+---@field computedFlags number
+
+-- =========================================================
+-- ITEM
+-- =========================================================
+
+---@class Item
+---@field getName fun(self: Item): string
+---@field getID fun(self: Item): number
+
+-- =========================================================
+-- TILE
+-- =========================================================
+
+---@class Tile
+---@field getTileID fun(self: Tile): number
+
+-- =========================================================
+-- DROP
+-- =========================================================
+
+---@class Drop
+---@field getUID fun(self: Drop): number
+---@field getItemID fun(self: Drop): number
+---@field getPosX fun(self: Drop): number
+---@field getPosY fun(self: Drop): number
+
+-- =========================================================
+-- PLAYER
+-- =========================================================
+
+---@class Player
+---@field getRole fun(self: Player): Role
+---@field onConsoleMessage fun(self: Player, text: string)
+---@field onTalkBubble fun(self: Player, netID: number, text: string, condition: number)
+---@field getName fun(self: Player): string
+---@field getIP fun(self: Player): string
+---@field getRID fun(self: Player): number
+---@field getUserID fun(self: Player): number
+---@field getNetID fun(self: Player): number
+---@field sendVariant fun(self: Player, variants: any[], delay?: number, netID?: number)
+---@field onDialogRequest fun(self: Player, dialog: string)
+---@field hasRole fun(self: Player, roleID: number): boolean
+---@field hasActiveBlessing fun(self: Player): boolean
+---@field addBlessing fun(self: Player, name: string)
+---@field getPosX fun(self: Player): number
+---@field getPosY fun(self: Player): number
+---@field getItemAmount fun(self: Player, itemID: number): number
+---@field changeItem fun(self: Player, itemID: number, amount: number, toBackpack: number): boolean
+
+-- =========================================================
+-- WORLD
+-- =========================================================
+
+---@class World
+---@field getName fun(self: World): string
+---@field getWorldLock fun(self: World): Tile|nil
+---@field getOwner fun(self: World): Player|nil
+---@field getWorldType fun(self: World): string
+---@field setOwner fun(self: World, userID: number)
+---@field getDroppedItems fun(self: World): Drop[]
+---@field getTileDroppedItems fun(self: World, tile: Tile): Drop[]
+---@field getWorldSizeX fun(self: World): number
+---@field getWorldSizeY fun(self: World): number
+---@field getPlayers fun(self: World): Player[]
+---@field spawnItem fun(self: World, x: number, y: number, itemID: number, condition: number): Drop
+---@field removeDroppedItem fun(self: World, dropUID: number)
+
+-- =========================================================
+-- GLOBAL FUNCTIONS
+-- =========================================================
+
+---@param commandData CommandData
+function registerLuaCommand(commandData) end
+
+---@param worldID number
+---@return World
+function getWorld(worldID) end
+
+---@param itemID number
+---@return Item
+function getItem(itemID) end
+
+---@return Role
+function getHighestPriorityRole() end
+
+---@return Role[]
+function getRoles() end
+
+---@param eventData EventData
+function registerLuaEvent(eventData) end
+
+---@return number
+function getCurrentServerEvent() end
+
+---@param sidebarJson string
+function addSidebarButton(sidebarJson) end
+
+-- =========================================================
+-- CALLBACKS
+-- =========================================================
+
+---@param callback fun(world: World, player: Player, message: string): boolean|nil
+function onPlayerCommandCallback(callback) end
+
+---@param callback fun(player: Player)
+function onPlayerLoginCallback(callback) end
+
+---@param callback fun(world: World, player: Player, data: string): boolean|nil
+function onPlayerDialogCallback(callback) end
+
+---@param callback fun(world: World, player: Player, itemID: number, itemcount: number): boolean|nil
+function onPlayerPickupItemCallback(callback) end
+
+---@param callback fun(player: Player)
+function onPlayerBlessingClaimCallback(callback) end
+
+---@param callback fun(world: World, player: Player)
+function onPlayerEnterWorldCallback(callback) end
+
+---@param callback fun(player: Player)
+function onPlayerBoostClaimCallback(callback) end
+
+---@param callback fun()
+function onAutoSaveRequest(callback) end
+
+---@param callback fun(newEventID: number, oldEventID: number)
+function onEventChangedCallback(callback) end
+
+---@param callback fun(world: World, player: Player, tile: Tile): boolean|nil
+function onTilePunchCallback(callback) end
+
+---@param callback fun(world: World, player: Player, tile: Tile, clickedPlayer: Player, itemID: number): boolean|nil
+function onPlayerConsumableCallback(callback) end
+
+---@param callback fun(player: Player, variants: any[], delay: number, netID: number)
+function onPlayerVariantCallback(callback) end
+
+---@param callback fun(world: World, player: Player, data: string[]): boolean|nil
+function onPlayerActionCallback(callback) end
+
+-- =========================================================
+-- SERVER STORAGE
+-- =========================================================
+
+---@param key string
+---@param value string
+function saveStringToServer(key, value) end
+
+---@param key string
+---@return string
+function loadStringFromServer(key) end
+
+---@param key string
+---@param data any
+function saveDataToServer(key, data) end
+
+---@param key string
+---@return any
+function loadDataFromServer(key) end

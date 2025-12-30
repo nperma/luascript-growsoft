@@ -1,4 +1,5 @@
 {
+  "vzfiletemplates.userTemplatesFolders": ["./templates"],
   "Lua.workspace.library": ["./api"],
   "Lua.diagnostics.globals": [
     "registerLuaCommand",
@@ -6,6 +7,12 @@
     "onPlayerDialogCallback",
     "onAUtoSaveRequest",
     "onPlayerBlessingClaimCallback",
-    "json"
+    "json",
+    "timer",
+    "registerLuaEvent",
+    "onEventChangedCallback",
+    "addSidebarButton",
+    "LoadDataFromServer",
+    "SaveDataToServer"
   ]
 }
