@@ -93,6 +93,7 @@ timer = {}
 -- =========================================================
 
 ---@class Player
+---@field getWorld fun(self: Player): World
 ---@field getRole fun(self: Player): Role
 ---@field onConsoleMessage fun(self: Player, text: string)
 ---@field onTalkBubble fun(self: Player, netID: number, text: string, condition: number)
@@ -117,6 +118,7 @@ timer = {}
 
 ---@class World
 ---@field getName fun(self: World): string
+---@field getID fun(self: World): number
 ---@field getWorldLock fun(self: World): Tile|nil
 ---@field getOwner fun(self: World): Player|nil
 ---@field getWorldType fun(self: World): string
@@ -202,6 +204,15 @@ function onPlayerVariantCallback(callback) end
 ---@param callback fun(world: World, player: Player, data: string[]): boolean|nil
 function onPlayerActionCallback(callback) end
 
+---@param callback fun(): any
+function onTick(callback) end
+
+---@param callback fun(player: Player): any
+function onPlayerTick(callback) end
+
+---@param callback fun(world: World): any
+function onWorldTick(callback) end
+
 -- =========================================================
 -- SERVER STORAGE
 -- =========================================================
@@ -214,10 +225,23 @@ function saveStringToServer(key, value) end
 ---@return string
 function loadStringFromServer(key) end
 
----@param key string
----@param data any
+--- Save Data into table
+--- 
+--- @usage
+--- saveDataToServer('nperma_db', {'boolean'})
+--- 
+---@param key string -- key database
+---@param data any -- value
 function saveDataToServer(key, data) end
 
 ---@param key string
 ---@return any
 function loadDataFromServer(key) end
+
+--- get Server ID
+--- @return number
+function getServerID() end
+
+--- get Server Name
+--- @return string 
+function getServerName() end
