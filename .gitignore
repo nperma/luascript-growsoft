@@ -1,7 +1,8 @@
 # Ignore everything inside scripts/premium
 scripts/premium/*
 
-templates
-
 # But keep markdown documentation
 !scripts/premium/README.md
+
+twst*
+templates*

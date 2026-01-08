@@ -77,6 +77,8 @@ timer = {}
 
 ---@class Tile
 ---@field getTileID fun(self: Tile): number
+---@field getPosX fun(self: Tile): number
+---@field getPosY fun(self: Tile): number
 
 -- =========================================================
 -- DROP
@@ -89,7 +91,7 @@ timer = {}
 ---@field getPosY fun(self: Drop): number
 
 -- =========================================================
--- PLAYER
+-- PLAYER & NPC
 -- =========================================================
 
 ---@class Player
@@ -112,6 +114,9 @@ timer = {}
 ---@field getItemAmount fun(self: Player, itemID: number): number
 ---@field changeItem fun(self: Player, itemID: number, amount: number, toBackpack: number): boolean
 
+---@class NPC
+---@return Player
+
 -- =========================================================
 -- WORLD
 -- =========================================================
@@ -130,6 +135,17 @@ timer = {}
 ---@field getPlayers fun(self: World): Player[]
 ---@field spawnItem fun(self: World, x: number, y: number, itemID: number, condition: number): Drop
 ---@field removeDroppedItem fun(self: World, dropUID: number)
+---@field updateClothing fun(self: World, player: Player)
+---@field setClothing fun(self: World, target: Player|NPC, itemID: number)
+---@field hasAccess fun(self: World, user: Player|NPC): boolean
+---@field addAccess fun(self: World, user: Player|NPC, permission: 0|1)
+---@field removeAccess fun(self: World, user: Player|NPC)
+---@field hasTileAccess fun(self: World, user: Player|NPC, tile: Tile): boolean
+---@field addTileAccess fun(self: World, user: Player|NPC, tile: Tile)
+---@field removeTileAccess fun(self: World, user: Player|NPC, tile: Tile)
+---@field createNPC fun(self: World, name: string, x: number, y: number)
+---@field findNPCByName fun(self: World, npcName: string)
+---@field removeNPC fun(self: World, npc: NPC)
 
 -- =========================================================
 -- GLOBAL FUNCTIONS
@@ -142,12 +158,19 @@ function registerLuaCommand(commandData) end
 ---@return World
 function getWorld(worldID) end
 
+---@param playerID number
+---@return Player
+function getPlayer(playerID) end
+
 ---@param itemID number
 ---@return Item
 function getItem(itemID) end
 
 ---@return Role
 function getHighestPriorityRole() end
+
+---@param object {modID: number,modName: string, onAddMessage: string, onRemoveMessage: string, iconID: number, changeSkin: table,modState: table}
+function registerLuaPlaymod(object) end
 
 ---@return Role[]
 function getRoles() end
@@ -161,6 +184,9 @@ function getCurrentServerEvent() end
 ---@param sidebarJson string
 function addSidebarButton(sidebarJson) end
 
+---@param text string
+function parseText(text) end
+
 -- =========================================================
 -- CALLBACKS
 -- =========================================================
@@ -171,7 +197,7 @@ function onPlayerCommandCallback(callback) end
 ---@param callback fun(player: Player)
 function onPlayerLoginCallback(callback) end
 
----@param callback fun(world: World, player: Player, data: string): boolean|nil
+---@param callback fun(world: World, player: Player, data: string[]): boolean|nil
 function onPlayerDialogCallback(callback) end
 
 ---@param callback fun(world: World, player: Player, itemID: number, itemcount: number): boolean|nil
@@ -204,6 +230,9 @@ function onPlayerVariantCallback(callback) end
 ---@param callback fun(world: World, player: Player, data: string[]): boolean|nil
 function onPlayerActionCallback(callback) end
 
+---@param callback fun(world: World, player: Player, tile: Tile): boolean|nil
+function onTileWrenchCallback(callback) end
+
 ---@param callback fun(): any
 function onTick(callback) end
 
@@ -212,6 +241,15 @@ function onPlayerTick(callback) end
 
 ---@param callback fun(world: World): any
 function onWorldTick(callback) end
+
+---@param callback fun(world: World): any
+function onWorldLoaded(callback) end
+
+---@param callback fun(world: World): any
+function onWorldOffloaded(callback) end
+
+---@param callback fun(player: Player, data: string, delay: number, netID: number): boolean|nil
+function onPlayerVariantCallback(callback) end
 
 -- =========================================================
 -- SERVER STORAGE
@@ -226,10 +264,10 @@ function saveStringToServer(key, value) end
 function loadStringFromServer(key) end
 
 --- Save Data into table
---- 
+---
 --- @usage
 --- saveDataToServer('nperma_db', {'boolean'})
---- 
+---
 ---@param key string -- key database
 ---@param data any -- value
 function saveDataToServer(key, data) end
@@ -243,5 +281,5 @@ function loadDataFromServer(key) end
 function getServerID() end
 
 --- get Server Name
---- @return string 
+--- @return string
 function getServerName() end
