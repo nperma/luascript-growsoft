@@ -2,7 +2,7 @@
 scripts/premium/*
 
 # But keep markdown documentation
-!scripts/premium/README.md
+!scripts/premium/*.md
 
 twst*
 templates*
