@@ -1,7 +1,7 @@
 # Rent Door (Public Docs)
 
 - Creator: @Nperma
-- Price: {locked: 100K IDR, unlocked: 250K IDR}
+- Price: @Private
 
 > description: This Documentation for references your script
 
