@@ -97,6 +97,8 @@ timer = {}
 ---@class Player
 ---@field getWorld fun(self: Player): World
 ---@field getRole fun(self: Player): Role
+---@field getBankBalance fun(self: Player): number
+---@field setBankBalance fun(self: Player, value: number)
 ---@field onConsoleMessage fun(self: Player, text: string)
 ---@field onTalkBubble fun(self: Player, netID: number, text: string, condition: number)
 ---@field getName fun(self: Player): string
@@ -113,6 +115,10 @@ timer = {}
 ---@field getPosY fun(self: Player): number
 ---@field getItemAmount fun(self: Player, itemID: number): number
 ---@field changeItem fun(self: Player, itemID: number, amount: number, toBackpack: number): boolean
+---@field playAudio fun(self: Player, filePath: string,delay?: number)
+---@field onParticleEffect fun(self: Player, particleID: number,tileX:number,tileY:number,none1:number,none2:number,none3:number)
+---@field addBankBalance fun(self: Player, amount:number)
+---@field isOnline fun(self: Player): boolean
 
 ---@class NPC
 ---@return Player
@@ -124,6 +130,7 @@ timer = {}
 ---@class World
 ---@field getName fun(self: World): string
 ---@field getID fun(self: World): number
+---@field getTiles fun(self: World): Tile[]
 ---@field getWorldLock fun(self: World): Tile|nil
 ---@field getOwner fun(self: World): Player|nil
 ---@field getWorldType fun(self: World): string
@@ -135,7 +142,7 @@ timer = {}
 ---@field getPlayers fun(self: World): Player[]
 ---@field spawnItem fun(self: World, x: number, y: number, itemID: number, condition: number): Drop
 ---@field removeDroppedItem fun(self: World, dropUID: number)
----@field updateClothing fun(self: World, player: Player)
+---@field updateClothing fun(self: World, player: Player|NPC)
 ---@field setClothing fun(self: World, target: Player|NPC, itemID: number)
 ---@field hasAccess fun(self: World, user: Player|NPC): boolean
 ---@field addAccess fun(self: World, user: Player|NPC, permission: 0|1)
@@ -146,6 +153,10 @@ timer = {}
 ---@field createNPC fun(self: World, name: string, x: number, y: number)
 ---@field findNPCByName fun(self: World, npcName: string)
 ---@field removeNPC fun(self: World, npc: NPC)
+---@field setTileForeground fun(self: World, tile: Tile, itemID: number, isVisual?: 1|0, player?: Player)
+---@field setTileBackground fun(self: World, tile: Tile, itemID: number, isVisual?: 1|0, player?: Player)
+---@field getTile fun(self: World, tileX: number, tileY: number): Tile
+---@field useItemEffect fun(self: World, senderNetID: number, itemID: number, targetNetID: number, delay: number)
 
 -- =========================================================
 -- GLOBAL FUNCTIONS
@@ -250,6 +261,9 @@ function onWorldOffloaded(callback) end
 
 ---@param callback fun(player: Player, data: string, delay: number, netID: number): boolean|nil
 function onPlayerVariantCallback(callback) end
+
+---@param callback fun(world: World,player: Player, tile: Tile): boolean|nil
+function onTileBreakCallback(callback) end
 
 -- =========================================================
 -- SERVER STORAGE
