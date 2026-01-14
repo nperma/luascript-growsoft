@@ -79,6 +79,8 @@ timer = {}
 ---@field getTileID fun(self: Tile): number
 ---@field getPosX fun(self: Tile): number
 ---@field getPosY fun(self: Tile): number
+---@field getTileForeground fun(self: Tile): number
+---@field getTileBackground fun(self: Tile): number
 
 -- =========================================================
 -- DROP
@@ -157,6 +159,7 @@ timer = {}
 ---@field setTileBackground fun(self: World, tile: Tile, itemID: number, isVisual?: 1|0, player?: Player)
 ---@field getTile fun(self: World, tileX: number, tileY: number): Tile
 ---@field useItemEffect fun(self: World, senderNetID: number, itemID: number, targetNetID: number, delay: number)
+---@field setPlayerPosition fun(self: World, player: Player|NPC, posX: number, posY: number)
 
 -- =========================================================
 -- GLOBAL FUNCTIONS
