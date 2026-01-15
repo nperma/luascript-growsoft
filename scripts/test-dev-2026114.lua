@@ -28,7 +28,6 @@ onPlayerCommandCallback(function(world, player, fullCommand)
       player:onConsoleMessage("`4>> pls type the itemID..\n`oUsage: /" .. command .. " 242")
     else
       local npc = world:createNPC("test", player:getPosX(), player:getPosY())
-
       --- hide npc
       world:setClothing(npc, 1904) -- OneRing
       world:setClothing(npc, 3774) -- NoFace
