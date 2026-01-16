@@ -268,6 +268,9 @@ function onPlayerVariantCallback(callback) end
 ---@param callback fun(world: World,player: Player, tile: Tile): boolean|nil
 function onTileBreakCallback(callback) end
 
+---@param callback fun(world: World, player: Player, tile: Tile): boolean|nil
+function onTilePlaceCallback(callback) end
+
 -- =========================================================
 -- SERVER STORAGE
 -- =========================================================
