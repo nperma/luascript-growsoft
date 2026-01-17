@@ -92,60 +92,107 @@ if player_db then
   player_table = json.decode(player_db)
 end
 
+local KitByLevel = {}
+
+for _, kit in ipairs(Configuration.data) do
+  KitByLevel[kit.level] = kit
+end
+
 local function calcRequireExp(level)
   return 100 + (level * 50)
 end
 
 local function getKitData(player)
   local uid = tostring(player:getUserID())
-  if not player_table[uid] then
+
+  if player_table[uid] == nil then
     player_table[uid] = {}
   end
 
-  if not player_table[uid].kits then
+  if player_table[uid].kits == nil then
     player_table[uid].kits = {
-      level = 0,
+      level = 1,
       exp = 0,
-      requireExp = calcRequireExp(0),
-      claimed = {}
+      requireExp = calcRequireExp(1),
+      claimed = {},
+      __temp = ''
     }
+  else
+    if player_table[uid].kits.level == nil or player_table[uid].kits.level < 1 then
+      player_table[uid].kits.level = 1
+    end
+
+    if player_table[uid].kits.requireExp == nil then
+      player_table[uid].kits.requireExp = calcRequireExp(player_table[uid].kits.level)
+    end
+
+    if player_table[uid].kits.claimed == nil then
+      player_table[uid].kits.claimed = {}
+    end
   end
 
   return player_table[uid].kits
 end
 
 local function giveKit(player, kit)
+  local text = '`2Claim Kits:\n`o'
   for itemID, amount in pairs(kit.prizes) do
+    text = text .. getItem(itemID):getName() .. ' ' .. amount .. 'x\n'
     if not player:changeItem(itemID, amount, 0) then
       player:changeItem(itemID, amount, 1)
     end
   end
 end
 
-local function checkKitReward(player, kitData)
-  for _, kit in ipairs(Configuration.data) do
-    if kitData.level >= kit.level and not kitData.claimed[kit.level] then
-      giveKit(player, kit)
-      kitData.claimed[kit.level] = true
+local function checkKit(player, kitData, unlockedLevel)
+  local kit = KitByLevel[unlockedLevel]
+
+  if kit ~= nil then
+    if kitData.claimed[unlockedLevel] ~= true and kitData.__temp ~= unlockedLevel then
+      kitData.__temp = unlockedLevel
       player:onConsoleMessage(
-        '`#KIT UNLOCKED!`\nLevel ' .. kit.level .. '\n' .. kit.description
+        '`#KIT UNLOCKED!`'
       )
-      -- checkKitReward(player, kitData)
     end
   end
 end
 
 local function addExp(player, amount)
   local kitData = getKitData(player)
+
+  if kitData.level >= Configuration.maxLevel then
+    return
+  end
+
   kitData.exp = kitData.exp + amount
 
-  while kitData.exp >= kitData.requireExp and kitData.level < Configuration.maxLevel do
-    kitData.exp = kitData.exp - kitData.requireExp
-    kitData.level = kitData.level + 1
-    kitData.requireExp = calcRequireExp(kitData.level)
+  local L = kitData.level
+  local base = 100 + (L * 50)
+  local step = 50
+  local exp = kitData.exp
 
-    player:onConsoleMessage('`#LEVEL UP!` Level ' .. kitData.level)
+  local n = math.floor(
+    (-(2 * base - step) + math.sqrt((2 * base - step) ^ 2 + 8 * step * exp))
+    / (2 * step)
+  )
+
+  if n <= 0 then
+    return
   end
+
+  if L + n > Configuration.maxLevel then
+    n = Configuration.maxLevel - L
+  end
+
+  local usedExp = n * (2 * base + (n - 1) * step) / 2
+
+  kitData.exp = kitData.exp - usedExp
+  kitData.level = L + n
+  kitData.requireExp = calcRequireExp(kitData.level)
+
+  player:onConsoleMessage('`#LEVEL UP!` Level ' .. kitData.level)
+
+  checkKit(player, kitData, kitData.level)
 end
 
 onTileBreakCallback(function(world, player, tile)
@@ -195,9 +242,28 @@ end
 
 onPlayerCommandCallback(function(world, player, fullCommand)
   local command, args = fullCommand:match("^(%S+)%s*(.*)$")
-  if command:lower() == 'kits' then
-    kitDialog(player)
-    return true
+
+  if command:lower() == Configuration.command then
+    if args ~= '' then
+      local sub, value = args:match("^(%S+)%s*(%d*)$")
+      local isDev = player:hasRole(getHighestPriorityRole().roleID)
+      if isDev then
+        if sub == 'xp' then
+          local amount = tonumber(value)
+
+          if amount ~= nil and amount > 0 then
+            addExp(player, amount)
+            player:onConsoleMessage('`2Added Kit XP: `o' .. amount)
+          else
+            player:onConsoleMessage('Usage: /kits xp <amount>')
+          end
+        end
+      end
+      return true
+    else
+      kitDialog(player)
+      return true
+    end
   end
 end)
 
@@ -218,9 +284,6 @@ onPlayerDialogCallback(function(world, player, data)
             if kitData.claimed[kit.level] ~= true then
               giveKit(player, kit)
               kitData.claimed[kit.level] = true
-              player:onConsoleMessage(
-                '`2KIT CLAIMED!`\nLevel ' .. kit.level .. '\n' .. kit.description
-              )
             else
               player:onConsoleMessage('`4Kit already claimed')
             end
@@ -239,5 +302,5 @@ onPlayerDialogCallback(function(world, player, data)
 end)
 
 onAutoSaveRequest(function()
-  saveStringToServer('nperma_player_db', player_table)
+  saveStringToServer('nperma_player_db', json.encode(player_table))
 end)
