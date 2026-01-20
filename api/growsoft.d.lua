@@ -70,6 +70,18 @@ timer = {}
 ---@class Item
 ---@field getName fun(self: Item): string
 ---@field getID fun(self: Item): number
+---@field getRarity fun(self: Item): number
+---@field getActionType fun(self: Item): number
+---@field getGrowTime fun(self: Item): number
+---@field setGrowTime fun(self: Item, seconds: number)
+---@field setActionType fun(self: Item, type: number)
+---@field setDescription fun(self: Item, text: string)
+---@field getCategoryType fun(self: Item): number
+---@field getEditableType fun(self: Item): number
+---@field setCategoryType fun(self: Item, value: number)
+---@field setEditableType fun(self: Item, value: number)
+---@field setPrice fun(self: Item, price: number)
+---@field isObtainable fun(self: Item): boolean
 
 -- =========================================================
 -- TILE
@@ -81,6 +93,10 @@ timer = {}
 ---@field getPosY fun(self: Tile): number
 ---@field getTileForeground fun(self: Tile): number
 ---@field getTileBackground fun(self: Tile): number
+---@field getTileData fun(self: Tile, property: string): any
+---@field setTileData fun(self: Tile, property: string, value: any)
+---@field getTileItem fun(self: Tile): Item
+---@field setFlags fun(self: Tile, flags: any)
 
 -- =========================================================
 -- DROP
@@ -91,6 +107,8 @@ timer = {}
 ---@field getItemID fun(self: Drop): number
 ---@field getPosX fun(self: Drop): number
 ---@field getPosY fun(self: Drop): number
+---@field getItemCount fun(self: Drop): number
+---@field getFlags fun(self: Drop): number
 
 -- =========================================================
 -- PLAYER & NPC
@@ -121,6 +139,78 @@ timer = {}
 ---@field onParticleEffect fun(self: Player, particleID: number,tileX:number,tileY:number,none1:number,none2:number,none3:number)
 ---@field addBankBalance fun(self: Player, amount:number)
 ---@field isOnline fun(self: Player): boolean
+---@field enterWorld fun(self: Player, worldName: string,worldIDdoor: string)
+---@field getLevel fun(self: Player): number
+---@field addLevel fun(self: Player, amount: number)
+---@field removeLevel fun(self: Player, amount: number)
+---@field setLevel fun(self: Player, level: number)
+---@field setXP fun(self: Player, amount: number)
+---@field removeXP fun(self: Player, amount: number)
+---@field getGems fun(self: Player): number
+---@field addGems fun(self: Player, amount: number, sendPacket?: boolean, isDisplay?: boolean)
+---@field removeGems fun(self: Player, amount: number, sendPacket?: boolean, isDisplay?: boolean)
+---@field setGems fun(self: Player, amount: number)
+---@field getCoins fun(self: Player): number
+---@field addCoins fun(self: Player, amount: number, sendPacket?: boolean)
+---@field removeCoins fun(self: Player, amount: number, sendPacket?: boolean)
+---@field setCoins fun(self: Player, amount: number)
+---@field ban fun(self: Player, length_seconds: number, reason: string, banned_by_player?: Player, ban_device?: boolean, ban_ip?: boolean)
+---@field disconnect fun(self: Player)
+---@field sendAction fun(self: Player, actionString: string)
+---@field doAction fun(self: Player, actionString: string)
+---@field getCountry fun(self: Player): string
+---@field setCountry fun(self: Player, countryCode: string)
+---@field getPlatform fun(self: Player): string
+---@field getInventoryItems fun(self: Player): Item[]
+---@field getInventorySize fun(self: Player): number
+---@field isMaxInventorySpace fun(self: Player): boolean
+---@field upgradeInventorySpace fun(self: Player, amount: number)
+---@field getFriends fun(self: Player): Player[]
+---@field addFriend fun(self: Player, targetPlayer: Player)
+---@field removeFriend fun(self: Player, targetPlayer: Player)
+---@field getPlaytime fun(self: Player): number
+---@field getOnlineStatus fun(self: Player): number
+---@field removeBankBalance fun(self: Player, amount: number)
+---@field getWorldName fun(self: Player): string
+---@field onTextOverlay fun(self: Player, text: string)
+---@field getCleanName fun(self: Player): string
+---@field setRole fun(self: Player, roleID: number)
+---@field getMod fun(self: Player, playModID: number)
+---@field addMod fun(self: Player, modID: number, durationSeconds: number)
+---@field removeMod fun(self: Player, modID: number)
+---@field hasTitle fun(self: Player, id: number): boolean
+---@field addTitle fun(self: Player, id: number)
+---@field removeTitle fun(self: Player, id: number)
+---@field getType fun(self: Player): number
+---@field isFacingLeft fun(self: Player): boolean
+---@field addMail fun(self: Player, mailDataTable: table)
+---@field clearMailbox fun(self: Player)
+---@field setNickname fun(self: Player, name: string)
+---@field resetNickname fun(self: Player)
+---@field getClothingItemID fun(self: Player, slot: number): number
+---@field getBackpackUsedSize fun(self: Player): number
+---@field setNextDialogRGBA fun(self: Player, r: number, g: number, b: number, a: number)
+---@field setNextDialogBorderRGBA fun(self: Player, r: number, g: number, b: number, a: number)
+---@field resetDialogColor fun(self: Player)
+---@field setCountryFlagForeground fun(self: Player, itemID: number)
+---@field getCountryFlagForeground fun(self: Player): number
+---@field setCountryFlagBackground fun(self: Player, itemID: number)
+---@field getCountryFlagBackground fun(self: Player): number
+---@field getHomeWorldID fun(self: Player): number
+---@field getGuildID fun(self: Player): number
+---@field getDiscordID fun(self: Player): string
+---@field getAccountCreationDateStr fun(self: Player): string
+---@field getEmail fun(self: Player): string
+---@field setPassword fun(self: Player, newPassword: string)
+---@field checkPassword fun(self: Player, password: string): boolean
+---@field getGender fun(self: Player): number
+---@field hasBlessing fun(self: Player, blessingID: number): boolean
+---@field removeBlessing fun(self: Player, blessingID: number)
+---@field addFriend fun(self: Player, target: Player)
+---@field removeFriend fun(self: Player, target: Player)
+---@field getOwnedWorlds fun(self: Player): World[]
+---@field getRecentWorlds fun(self: Player): World[]
+---@field getAccessWorlds fun(self: Player): World[]
 
 ---@class NPC
 ---@return Player
@@ -159,7 +249,32 @@ timer = {}
 ---@field setTileBackground fun(self: World, tile: Tile, itemID: number, isVisual?: 1|0, player?: Player)
 ---@field getTile fun(self: World, tileX: number, tileY: number): Tile
 ---@field useItemEffect fun(self: World, senderNetID: number, itemID: number, targetNetID: number, delay: number)
----@field setPlayerPosition fun(self: World, player: Player|NPC, posX: number, posY: number)
+---@field setPlayerPosition fun(self: World, player: Player|NPC, posX: number, posY: number)---@field spawnGems fun(self: World, x: number, y: number, amount: number, player?: Player)
+---@field kill fun(self: World, player: Player)
+---@field punchTile fun(self: World, tile: Tile)
+---@field updateTile fun(self: World, tile: Tile)
+---@field getVisiblePlayersCount fun(self: World): number
+---@field getPlayersCount fun(self: World, includeInvisible?: boolean): number
+---@field getSizeX fun(self: World): number
+---@field getSizeY fun(self: World): number
+---@field setWeather fun(self: World, weatherID: number)
+---@field isGameActive fun(self: World): boolean
+---@field new fun(self: World, name: string, sizeX: number, sizeY: number, worldType: string)
+---@field newFromTemplate fun(self: World, name: string, templateFile: string)
+---@field save fun(self: World)
+---@field delete fun(self: World)
+---@field removeOwner fun(self: World)
+---@field removeAllTileAccess fun(self: World)
+---@field spawnGems fun(self: World, x: number, y: number, amount: number, player?: Player)
+---@field onCreateChatBubble fun(self: World, x: number, y: number, text: string, netID?: number)
+---@field onCreateExplosion fun(self: World, x: number, y: number, radius: number, power: number)
+---@field addXP fun(self: World, player: Player, amount: number)
+---@field adjustGems fun(self: World, player: Player, tile: Tile, gemCount: number, value: number)
+---@field onLoot fun(self: World, player: Player, tile: Tile, gemCount: number)
+---@field getTilesByActionType fun(self: World, actionType: number): Tile[]
+---@field onGameWinHighestScore fun(self: World)
+---@field sendPlayerMessage fun(self: World, player: Player, message: string)
+---@field redeemCode fun(self: World, player: Player, code: string)
 
 -- =========================================================
 -- GLOBAL FUNCTIONS
@@ -271,6 +386,21 @@ function onTileBreakCallback(callback) end
 ---@param callback fun(world: World, player: Player, tile: Tile): boolean|nil
 function onTilePlaceCallback(callback) end
 
+---@param callback fun(world: World,player: Player)
+function onPlayerRegisterCallback(callback) end
+
+---@param callback fun(world: World, player: Player, itemID: number, itemCount: number)
+function onPlayerDropCallback(callback) end
+
+---@param callback fun(world: World, player: Player, tile: Tile): boolean|nil
+function onPlayerPlantCallback(callback) end
+
+---@param callback fun(world: World, player: Player, tile: Tile)
+function onPlayerHarvestCallback(callback) end
+
+---@param callback fun(world: World, player: Player)
+function onPlayerDeathCallback(callback) end
+
 -- =========================================================
 -- SERVER STORAGE
 -- =========================================================
@@ -303,3 +433,18 @@ function getServerID() end
 --- get Server Name
 --- @return string
 function getServerName() end
+
+---@return Player[]
+function getAllPlayers() end
+
+---@return number
+function getMaxLevel() end
+
+---@param name string
+---@return Player|nil
+function getPlayerByName(name) end
+
+---@return number
+function getItemsCount() end
+
+function reloadScripts() end
