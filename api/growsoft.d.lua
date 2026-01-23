@@ -401,6 +401,9 @@ function onPlayerHarvestCallback(callback) end
 ---@param callback fun(world: World, player: Player)
 function onPlayerDeathCallback(callback) end
 
+---@param callback fun(player: Player)
+function onPlayerDisconnectCallback(callback) end
+
 -- =========================================================
 -- SERVER STORAGE
 -- =========================================================
