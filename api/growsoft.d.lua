@@ -451,3 +451,6 @@ function getPlayerByName(name) end
 function getItemsCount() end
 
 function reloadScripts() end
+
+---@return Player[]
+function getServerPlayers() end
