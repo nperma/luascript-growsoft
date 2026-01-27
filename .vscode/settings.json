@@ -14,5 +14,6 @@
     "addSidebarButton",
     "LoadDataFromServer",
     "SaveDataToServer"
-  ]
+  ],
+  "Lua.diagnostics.disable": ["redundant-parameter"]
 }

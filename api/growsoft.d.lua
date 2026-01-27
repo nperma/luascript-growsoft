@@ -44,6 +44,27 @@ json = {}
 ---@field clear fun(id: any): any
 timer = {}
 
+---@class FileSystem
+---@field exists fun(path: string): boolean
+---@field read fun(path: string): string
+---@field write fun(path: string, content: string): boolean
+---@field delete fun(path: string): boolean
+file = {}
+
+---@class Directory
+---@field exists fun(path: string): boolean
+---@field create fun(path: string): boolean
+---@field delete fun(path: string): boolean
+dir = {}
+
+---@class SQLDatabaseConnection
+---@field query fun(self: SQLDatabaseConnection, sql: string, params?: any[]): any[]
+---@field close fun(self: SQLDatabaseConnection): void
+
+---@class SQLDatabase
+---@field open fun(dbPath: string): SQLDatabaseConnection
+sqlite = {}
+
 -- =========================================================
 -- ROLE
 -- =========================================================
