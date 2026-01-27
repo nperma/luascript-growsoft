@@ -59,7 +59,7 @@ dir = {}
 
 ---@class SQLDatabaseConnection
 ---@field query fun(self: SQLDatabaseConnection, sql: string, params?: any[]): any[]
----@field close fun(self: SQLDatabaseConnection): void
+---@field close fun(self: SQLDatabaseConnection)
 
 ---@class SQLDatabase
 ---@field open fun(dbPath: string): SQLDatabaseConnection
