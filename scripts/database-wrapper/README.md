@@ -1,8 +1,3 @@
-siap 👍
-ini versi **README.md full bahasa Inggris**, rapi dan konsisten, siap langsung kamu pakai di repository.
-
----
-
 # Database Wrapper (SQL & JSON)
 
 A lightweight database wrapper for Lua (GTPS Cloud / GrowSoft environment).
