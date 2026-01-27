@@ -96,6 +96,7 @@ timer = {}
 ---@field getTileData fun(self: Tile, property: string): any
 ---@field setTileData fun(self: Tile, property: string, value: any)
 ---@field getTileItem fun(self: Tile): Item
+---@field getFlags fun(self: Tile): any
 ---@field setFlags fun(self: Tile, flags: any)
 
 -- =========================================================
@@ -115,6 +116,7 @@ timer = {}
 -- =========================================================
 
 ---@class Player
+---@field enterWorld fun(self: Player, worldName: string, worldIDdoor: string,notification: number)
 ---@field getWorld fun(self: Player): World
 ---@field getRole fun(self: Player): Role
 ---@field getBankBalance fun(self: Player): number
@@ -211,6 +213,10 @@ timer = {}
 ---@field getOwnedWorlds fun(self: Player): World[]
 ---@field getRecentWorlds fun(self: Player): World[]
 ---@field getAccessWorlds fun(self: Player): World[]
+---@field getPing fun(self: Player): number
+---@field getDungeonScrolls fun(self: Player): number
+---@field setDungeonScrolls fun(self: Player, amount: number)
+---@field setStats fun(self: Player, type: number, amount: number)
 
 ---@class NPC
 ---@return Player
@@ -232,7 +238,7 @@ timer = {}
 ---@field getWorldSizeX fun(self: World): number
 ---@field getWorldSizeY fun(self: World): number
 ---@field getPlayers fun(self: World): Player[]
----@field spawnItem fun(self: World, x: number, y: number, itemID: number, condition: number): Drop
+---@field spawnItem fun(self: World, x: number, y: number, itemID: number, amount: number, condition?: 1|0): Drop
 ---@field removeDroppedItem fun(self: World, dropUID: number)
 ---@field updateClothing fun(self: World, player: Player|NPC)
 ---@field setClothing fun(self: World, target: Player|NPC, itemID: number)
@@ -275,6 +281,8 @@ timer = {}
 ---@field onGameWinHighestScore fun(self: World)
 ---@field sendPlayerMessage fun(self: World, player: Player, message: string)
 ---@field redeemCode fun(self: World, player: Player, code: string)
+---@field getMagplantRemoteTile fun(self: World, player: Player): Tile|nil
+---@field useConsumable fun(self: World, player: Player,tile: Tile, itemID: number, condition?: 1|0): boolean
 
 -- =========================================================
 -- GLOBAL FUNCTIONS
@@ -315,6 +323,12 @@ function addSidebarButton(sidebarJson) end
 
 ---@param text string
 function parseText(text) end
+
+--@param user_id number
+function deleteAccount(user_id) end
+
+--@param world_id number
+function deleteWorld(world_id) end
 
 -- =========================================================
 -- CALLBACKS
@@ -404,6 +418,18 @@ function onPlayerDeathCallback(callback) end
 ---@param callback fun(player: Player)
 function onPlayerDisconnectCallback(callback) end
 
+---@param callback fun(player: Player,cat: string,new_cat: string): boolean|nil
+function onWorldMenuRequest(callback) end
+
+---@param callback fun(world: World, player: Player, entity_type: string|number): boolean|nil
+function onPlayerDungeonEntitySlainCallback(callback) end
+
+---@param callback fun(world: World, player: Player, item_id: number, item_count: number)
+function onPlayerStartopiaCallback(callback) end
+
+---@param callback fun(world: World, player: Player, itemID: number, itemCount: number)
+function onPlayerCookingCallback(callback) end
+
 -- =========================================================
 -- SERVER STORAGE
 -- =========================================================
@@ -454,3 +480,92 @@ function reloadScripts() end
 
 ---@return Player[]
 function getServerPlayers() end
+
+-- =========================================================
+-- MOD IDS
+-- =========================================================
+
+ModID = {
+  duct_tape = 0,
+  ninja = -1,
+  ghost = -9,
+  silence = -10,
+  egged = -13,
+  broadcast_cd = -15,
+  soaked = -17,
+  medusa = -18,
+  winter_crown_red = -19,
+  winter_green = -20,
+  extra_chance_ghc = -23,
+  spotlight = -24,
+  radiation = -25,
+  locks_restrict = -26,
+  blueberry = -30,
+  block_place = -31,
+  block_break = -32,
+  ghost_mind = -33,
+  superbreak = -35,
+  superbreak_cd = -36,
+  more_gems_30_percent = -37,
+  more_gems_cd = -38,
+  sdb_cd = -39,
+  name_change_cd = -43,
+  recovery_surgery_cd = -44,
+  malpractice_cd = -45,
+  steady_hand = -46,
+  skill_spice = -47,
+  more_xp_from_surgery = -48,
+  lupus = -49,
+  chaos_infection = -50,
+  fatty_liver = -51,
+  moldy_guts = -52,
+  ecto_b = -53,
+  brainworm = -54,
+  broken_heart = -55,
+  chicken_feet = -56,
+  gems_cut = -58,
+  torn_punch = -59,
+  more_gems_20_percent = -65,
+  more_gems_30_golden_luck = -66,
+  more_gems_30_and_1_hit = -67,
+  easter_basket_cd = -68,
+  mine_coin_cd = -70,
+  ban = -75,
+  ninja_2 = -76,
+  sprite_eff_yellow = -78,
+  sprite_eff_blue = -79,
+  sprite_eff_green = -80,
+  frozen = -81,
+  time_skip_cd = -83,
+  coffee = -84,
+  tomato = -87,
+  extra_xp_for_all_25_percent = -88,
+  energy_ball_1 = -89,
+  energy_ball_2 = -90,
+  energy_ball_3 = -91,
+  energy_ball_4 = -92,
+  cursed = -93,
+  ten_percent_chance_gems_break = -94,
+  autofarm_in_front = -97,
+  autofarm_magplant = -98,
+  spam = -99,
+  auto_pull_join = -100,
+  auto_plant = -101,
+  antibounce = -103,
+  cheat_mod_fly = -104,
+  super_speed = -105,
+  gravity = -106,
+  fast_drop = -107,
+  fast_trash = -108,
+  no_gem_drop = -109,
+  spikeproof = -110,
+  no_particle = -112,
+  ninja_warp = -500,
+  charged_rayman = -501,
+  access_ghost = -502,
+  ghost_immune = -503,
+  chat_cd = -1000,
+  green_beer = -1100,
+}
+
+-- NOTE: LAST TEST ID -1600, HAVENT CHECK THE + NUMBER

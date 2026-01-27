@@ -242,7 +242,6 @@ end
 
 onPlayerCommandCallback(function(world, player, fullCommand)
   local command, args = fullCommand:match("^(%S+)%s*(.*)$")
-
   if command:lower() == Configuration.command then
     if args ~= '' then
       local sub, value = args:match("^(%S+)%s*(%d*)$")
