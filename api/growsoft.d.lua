@@ -150,7 +150,7 @@ sqlite = {}
 ---@field getUserID fun(self: Player): number
 ---@field getNetID fun(self: Player): number
 ---@field sendVariant fun(self: Player, variants: any[], delay?: number, netID?: number)
----@field onDialogRequest fun(self: Player, dialog: string)
+---@field onDialogRequest fun(self: Player, dialog: string, delay?: number, callback?: fun(world: World, player: Player, data: string[]): boolean|nil)
 ---@field hasRole fun(self: Player, roleID: number): boolean
 ---@field hasActiveBlessing fun(self: Player): boolean
 ---@field addBlessing fun(self: Player, name: string)
