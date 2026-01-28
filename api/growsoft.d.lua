@@ -451,6 +451,9 @@ function onPlayerStartopiaCallback(callback) end
 ---@param callback fun(world: World, player: Player, itemID: number, itemCount: number)
 function onPlayerCookingCallback(callback) end
 
+---@param callback fun(req): table
+function onHTTPRequest(callback) end
+
 -- =========================================================
 -- SERVER STORAGE
 -- =========================================================
@@ -501,6 +504,9 @@ function reloadScripts() end
 
 ---@return Player[]
 function getServerPlayers() end
+
+---@return number
+function getServerDefaultPort() end
 
 -- =========================================================
 -- MOD IDS
