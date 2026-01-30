@@ -1,4 +1,4 @@
-# Database Wrapper (SQL & JSON)
+# Database Wrapper (Module)
 
 A lightweight database wrapper for Lua (GTPS Cloud / GrowSoft environment).
 Provides a unified **key–value interface** for both **SQLite** and **JSON file storage** with caching.
