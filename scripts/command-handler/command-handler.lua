@@ -29,7 +29,7 @@ end
 
 ---comment
 ---@param option {name: string, description: string, aliases?: string[], roleRequired?: number, permission?: number, permissions?: number[]}
----@param callback fun(world: World, player: PlayerWrapper, data: {command: string, args: string, message: string}): boolean
+---@param callback fun(world: World, player: PlayerWrapper, data: {command: string, args: string[], message: string}): boolean
 function Command.register(option, callback)
   if option == nil or option.name == nil then
     print("[Command] register failed: command is missing")
