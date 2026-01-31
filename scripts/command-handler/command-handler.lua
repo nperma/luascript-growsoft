@@ -19,6 +19,7 @@ end
 -- {
 --   command = string,
 --   description = string,
+--   aliases = string[]
 --   roleRequired = number,   -- fallback
 --   permission = number,     -- fallback
 --   permissions = { number } -- priority (index 1)
@@ -27,7 +28,7 @@ end
 
 
 ---comment
----@param option {name: string, description: string, roleRequired?: number, permission?: number, permissions?: number[]}
+---@param option {name: string, description: string, aliases?: string[], roleRequired?: number, permission?: number, permissions?: number[]}
 ---@param callback fun(world: World, player: PlayerWrapper, data: {command: string, args: string, message: string}): boolean
 function Command.register(option, callback)
   if option == nil or option.name == nil then
@@ -48,12 +49,23 @@ function Command.register(option, callback)
       or option.roleRequired
       or 0
 
-  CommandData[name] = {
+  local entry = {
     command = name,
     roleRequired = requiredRole,
+    aliases = option.aliases,
     permissions = option.permissions or {},
     callback = callback
   }
+
+  CommandData[name] = entry
+
+  if option.aliases then
+    for _, alias in ipairs(option.aliases) do
+      if type(alias) == "string" then
+        CommandData[alias:lower()] = entry
+      end
+    end
+  end
 
   registerLuaCommand({
     command = name,

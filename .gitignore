@@ -4,6 +4,10 @@ scripts/premium/*
 # But keep markdown documentation
 !scripts/premium/*.md
 
+scripts/AutoPTHT/*
+
+!scripts/AutoPTHT/*.md
+
 twst*
 templates*
 
