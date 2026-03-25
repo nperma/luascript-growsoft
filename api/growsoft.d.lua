@@ -140,8 +140,8 @@ bit = {}
 ---@field getPosY fun(self: Tile): number
 ---@field getTileForeground fun(self: Tile): number
 ---@field getTileBackground fun(self: Tile): number
----@field getTileData fun(self: Tile, property: string): any
----@field setTileData fun(self: Tile, property: string, value: any)
+---@field getTileData fun(self: Tile, property: number): string|number
+---@field setTileData fun(self: Tile, property: number, value: any)
 ---@field getTileItem fun(self: Tile): Item
 ---@field getFlags fun(self: Tile): any
 ---@field setFlags fun(self: Tile, flags: any)
@@ -487,6 +487,17 @@ function getEcoQuantityPlayers(itemID) end
 
 ---@param itemID number
 function getEcoQuantityWorlds(itemID) end
+
+---@class PlayMod
+---@field id number
+---@field name string
+---@field iconId number
+---@field equipInfo string
+---@field removeInfo string
+---@field skinUint number
+
+--- @return PlayMod[]
+function getPlaymods() end
 
 -- =========================================================
 -- CALLBACKS
