@@ -225,12 +225,12 @@ DiscordBot = {}
 ---@field setXP fun(self: Player, amount: number)
 ---@field removeXP fun(self: Player, amount: number)
 ---@field getGems fun(self: Player): number
----@field addGems fun(self: Player, amount: number, sendPacket?: boolean, isDisplay?: boolean)
----@field removeGems fun(self: Player, amount: number, sendPacket?: boolean, isDisplay?: boolean)
+---@field addGems fun(self: Player, amount: number, sendPacket: 1|0, isDisplay?: boolean)
+---@field removeGems fun(self: Player, amount: number, sendPacket: 1|0, isDisplay?: boolean)
 ---@field setGems fun(self: Player, amount: number)
 ---@field getCoins fun(self: Player): number
----@field addCoins fun(self: Player, amount: number, sendPacket?: boolean)
----@field removeCoins fun(self: Player, amount: number, sendPacket?: boolean)
+---@field addCoins fun(self: Player, amount: number, sendPacket?: 1|0)
+---@field removeCoins fun(self: Player, amount: number, sendPacket: 1|0)
 ---@field setCoins fun(self: Player, amount: number)
 ---@field ban fun(self: Player, length_seconds: number, reason: string, banned_by_player?: Player, ban_device?: boolean, ban_ip?: boolean)
 ---@field disconnect fun(self: Player)
@@ -302,8 +302,9 @@ DiscordBot = {}
 ---@field getStats fun(self: Player, Stats_type: number): number
 ---@field getRealName fun(self: Player): string
 
----@class NPC
----@return Player
+---@class NPC : Player
+---@field visualPunch fun(self: NPC, tile: Tile)
+---@field visualBuild fun(self: NPC, tile: Tile)
 
 -- =========================================================
 -- WORLD
