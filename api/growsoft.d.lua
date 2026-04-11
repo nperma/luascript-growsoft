@@ -301,6 +301,8 @@ DiscordBot = {}
 ---@field getAutofarm fun(self: Player): Autofarm
 ---@field getStats fun(self: Player, Stats_type: number): number
 ---@field getRealName fun(self: Player): string
+---@field getRealCleanName fun(self: Player): string
+---@field sendRawPacket fun(self: Player, packet: string)
 
 ---@class NPC : Player
 ---@field visualPunch fun(self: NPC, tile: Tile)
@@ -391,6 +393,8 @@ punishmentData = {}
 ---@field removePunishment fun(self: World,player: Player, punishmentID: punishmentType)
 ---@field getPunishment fun(self: World,player: Player, punishmentID: punishmentType): punishmentData|nil
 ---@field spawnGhost fun(self: World, tile: Tile, ghostType: number, userID_spawner: number, despawnIn: number,m_speed: number)
+---@field getAllNPC fun(self: World): NPC[]
+---@field placeTile fun(self: World, place_id: number, player?: Player)
 
 -- =========================================================
 -- GLOBAL FUNCTIONS

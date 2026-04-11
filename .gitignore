@@ -4,9 +4,8 @@ scripts/premium/*
 # But keep markdown documentation
 !scripts/premium/*.md
 
-scripts/AutoPTHT/*
-
-!scripts/AutoPTHT/*.md
+scripts/AutoPTHT/*.lua
+scripts/NPC-SLAVE/*.lua
 
 twst*
 templates*
