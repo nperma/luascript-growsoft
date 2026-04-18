@@ -204,6 +204,7 @@ function showItemInfo(world, player, idx) ---@diagnostic disable-line
     'set_bg_color|0,0,0,150|',
     'set_default_color|`o',
     'add_label_with_icon|big|Item Info|left|' .. info.itemID .. '|',
+    'add_smalltext|price: ' .. info.rolePrice .. '|',
     'add_spacer|small|',
   }
 
@@ -243,7 +244,7 @@ function showRoleInfo(world, player, idx) --- @diagnostic disable-line
   ddd[#ddd + 1] = 'add_label|small|`wAllowed Commands|left|'
 
   if info.commands and #info.commands > 0 then
-    ddd[#ddd + 1] = 'add_smalltext|' .. table.concat(info.commands, ', ') .. '|'
+    ddd[#ddd + 1] = 'add_smalltext|/' .. table.concat(info.commands, ', /') .. '|'
   else
     ddd[#ddd + 1] = 'add_smalltext|`oNo Commands|'
   end
@@ -253,17 +254,20 @@ function showRoleInfo(world, player, idx) --- @diagnostic disable-line
 
   if info.flags and #info.flags > 0 then
     for i = 1, #info.flags do
-      ddd[#ddd + 1] = 'add_smalltext|`o• ' .. info.flags[i] .. '|'
+      ddd[#ddd + 1] = 'add_smalltext|`o- ' .. info.flags[i] .. '|'
     end
   else
     ddd[#ddd + 1] = 'add_smalltext|`oNo Flags|'
   end
 
   ddd[#ddd + 1] = 'add_custom_button|back|textLabel:Back;middle_colour:130154495;border_colour:130154495;|'
-  ddd[#ddd + 1] = 'add_custom_break|\nadd_spacer|small|\nadd_quick_exit|\nend_dialog|role_info||'
+  ddd[#ddd + 1] =
+  'add_custom_button|buy|textLabel:Purchase;middle_colour:431888895;border_colour:431888895;anchor:back;left:1.05;'
+  ddd[#ddd + 1] = 'add_custom_break|\nadd_custom_margin|x:0;y:24|\nadd_quick_exit|\nend_dialog|role_info_' ..
+      info.roleName .. '||'
 
   player:onDialogRequest(table.concat(ddd, '\n'), 20, function(world, player, eee)
-    if eee['dialog_name'] == 'role_info' then
+    if eee['dialog_name'] == ('role_info' .. info.roleName) then
       if eee['buttonClicked'] == 'back' then
         showAssetsDialog(world, player)
         return true
