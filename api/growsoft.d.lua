@@ -360,7 +360,7 @@ punishmentData = {}
 ---@field getTile fun(self: World, tileX: number, tileY: number): Tile
 ---@field useItemEffect fun(self: World, senderNetID: number, itemID: number, targetNetID: number, delay: number)
 ---@field setPlayerPosition fun(self: World, player: Player|NPC, posX: number, posY: number)---@field spawnGems fun(self: World, x: number, y: number, amount: number, player?: Player)
----@field kill fun(self: World, player: Player)
+---@field kill fun(self: World, player: Player,spawnToMainDoor: 0|1)
 ---@field punchTile fun(self: World, tile: Tile)
 ---@field updateTile fun(self: World, tile: Tile)
 ---@field getVisiblePlayersCount fun(self: World): number
