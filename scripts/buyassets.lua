@@ -126,10 +126,12 @@ for i = 1, #roles do
     end
 
     role_map[i] = {
+      id = role.roleID,
       roleName = role.namePrefix .. role.roleName,
       flags = activeFlags,
       includes = highestRole and (highestRole.namePrefix .. highestRole.roleName) or nil,
-      commands = roleCommands
+      commands = roleCommands,
+      rolePrice = role.rolePrice
     }
 
     dialog[#dialog + 1] =
@@ -204,7 +206,6 @@ function showItemInfo(world, player, idx) ---@diagnostic disable-line
     'set_bg_color|0,0,0,150|',
     'set_default_color|`o',
     'add_label_with_icon|big|Item Info|left|' .. info.itemID .. '|',
-    'add_smalltext|price: ' .. info.rolePrice .. '|',
     'add_spacer|small|',
   }
 
@@ -233,6 +234,7 @@ function showRoleInfo(world, player, idx) --- @diagnostic disable-line
     'set_bg_color|0,0,0,150|',
     'set_default_color|`o',
     'add_label|big|' .. info.roleName .. '|left|',
+    'add_smalltext|price: ' .. (info.rolePrice > 0 and info.rolePrice .. ' ā' or 'nfs') .. '|',
     'add_spacer|small|'
   }
 
@@ -259,17 +261,52 @@ function showRoleInfo(world, player, idx) --- @diagnostic disable-line
   else
     ddd[#ddd + 1] = 'add_smalltext|`oNo Flags|'
   end
-
+  ddd[#ddd + 1] = 'add_custom_margin|x:0;y:8|'
   ddd[#ddd + 1] = 'add_custom_button|back|textLabel:Back;middle_colour:130154495;border_colour:130154495;|'
-  ddd[#ddd + 1] =
-  'add_custom_button|buy|textLabel:Purchase;middle_colour:431888895;border_colour:431888895;anchor:back;left:1.05;'
-  ddd[#ddd + 1] = 'add_custom_break|\nadd_custom_margin|x:0;y:24|\nadd_quick_exit|\nend_dialog|role_info_' ..
+  if info.rolePrice ~= 0 then
+    ddd[#ddd + 1] =
+        string.format('add_custom_button|buy|textLabel:%sanchor:back;left:1.05;',
+          not player:hasRole(info.id) and 'Purchase;middle_colour:431888895;border_colour:431888895;' or
+          'Owned;middle_colour:0;border_colour:0;state:disabled;')
+  end
+  ddd[#ddd + 1] = 'add_custom_break|\nadd_quick_exit|\nend_dialog|role_info_' ..
       info.roleName .. '||'
 
   player:onDialogRequest(table.concat(ddd, '\n'), 20, function(world, player, eee)
-    if eee['dialog_name'] == ('role_info' .. info.roleName) then
+    if eee['dialog_name'] == ('role_info_' .. info.roleName) then
       if eee['buttonClicked'] == 'back' then
         showAssetsDialog(world, player)
+        return true
+      elseif eee['buttonClicked'] == 'buy' then
+        local price = info.rolePrice
+
+        if price <= 0 then
+          player:onTalkBubble(player:getNetID(), "This role is not for sale.", 0)
+          return true
+        end
+        --- player:onConsoleMessage(tostring(info.id))
+        if player:hasRole(info.id) then
+          player:onTalkBubble(player:getNetID(), "You already have this role.", 0)
+          return true
+        end
+
+        local gems = player:getCoins()
+        if gems < price then
+          player:onTalkBubble(player:getNetID(), "Not enough premium world lock.", 0)
+          return true
+        end
+
+
+        player:removeCoins(price, 1)
+        player:setRole(info.id)
+        player:playAudio('achievement.wav')
+
+        player:onTalkBubble(player:getNetID(),
+          string.format("Successfully purchased role %s!", info.roleName),
+          0
+        )
+
+        ---showAssetsDialog(world, player)
         return true
       end
     end
