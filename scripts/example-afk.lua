@@ -38,12 +38,6 @@ local Configuration = {
         amount = math.random(1, 5),
         multiple = false,
         multiple_max = 200
-      },
-
-      [7188] = {
-        chance = 0.0001,
-        amount = 1,
-        multiple = false
       }
     }
   }
@@ -86,10 +80,13 @@ local function resetAfk(player)
 
     isAfk[uid] = nil
   end
-  local name = player:getName()
+  local name = player:getCleanName()
   local pos = { x = player:getPosX(), y = player:getPosY() }
 
-  player:resetNickname()
+  local cleanName = name:match("^(.*) `4%[AFK%]$")
+  if name ~= cleanName and cleanName then
+    player:setNickname(cleanName)
+  end
 
   afkData[uid] = {
     x = pos.x,
@@ -139,7 +136,7 @@ end)
 
 onPlayerTick(function(player)
   if player:getWorld() == nil then return end
-  local name, user = player:getName(), player:getUserID()
+  local name, user = player:getCleanName(), player:getUserID()
   local pos = { x = player:getPosX(), y = player:getPosY() }
 
   local data = afkData[user]
