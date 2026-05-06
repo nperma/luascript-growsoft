@@ -89,11 +89,7 @@ local function resetAfk(player)
   local name = player:getName()
   local pos = { x = player:getPosX(), y = player:getPosY() }
 
-  local cleanName = name:gsub("%s*`4%[AFK%]", "")
-
-  if cleanName ~= name then
-    player:setNickname(cleanName)
-  end
+  player:resetNickname()
 
   afkData[uid] = {
     x = pos.x,
