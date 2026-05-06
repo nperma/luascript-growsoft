@@ -17,6 +17,12 @@
 ---@field description string
 ---@field message string
 
+---@class LuaAchievement
+---@field id number -- must be positive and unique
+---@field icon_id number
+---@field name string
+---@field description string
+
 ---@class SidebarButton
 ---@field active boolean
 ---@field buttonAction string
@@ -28,6 +34,29 @@
 ---@field order number
 ---@field rcssClass string
 ---@field text string
+
+---@class GuildMember
+---@field id number
+---@field role number
+---@field showLocation boolean
+---@field showNotifications boolean
+
+---@class Guild
+---@field getTitle fun(self: Guild): string
+---@field getDescription fun(self: Guild): string
+---@field getNotebook fun(self: Guild): string
+---@field getID fun(self: Guild): number
+---@field getWorldID fun(self: Guild): number
+---@field getXP fun(self: Guild): number
+---@field getLevel fun(self: Guild): number
+---@field getPoints fun(self: Guild): number
+---@field getSettings fun(self: Guild): any
+---@field getCreatedDate fun(self: Guild): number
+---@field getMascotForegroundID fun(self: Guild): number
+---@field getMascotBackgroundID fun(self: Guild): number
+---@field getDisplayGuildMascot fun(self: Guild): boolean
+---@field getOnlinePlayers fun(self: Guild): Player[]
+---@field getMembers fun(self: Guild): GuildMember[]
 
 -- =========================================================
 -- GLOBAL UTILITIES
@@ -109,6 +138,7 @@ bit = {}
 --- @field build_range number
 
 ---@class Item
+---@field setName fun(self: Item, name: string)
 ---@field getName fun(self: Item): string
 ---@field getID fun(self: Item): number
 ---@field getRarity fun(self: Item): number
@@ -127,8 +157,16 @@ bit = {}
 ---@field getTexture fun(self: Item): string
 ---@field getTextureX fun(self: Item): number
 ---@field getTextureY fun(self: Item): number
+---@field setTexture fun(self: Item, textureName: string)
+---@field setTextureHash fun(self: Item, hash: string)
+---@field setTextureX fun(self: Item, x: number)
+---@field setTextureY fun(self: Item, y: number)
 ---@field getEffect fun(self: Item): ItemEffect
 ---@field setEffect fun(self: Item, effect: ItemEffect)
+---@field getFarmability fun(self: Item): boolean
+---@field setFarmability fun(self: Item, is_farmable: boolean)
+---@field getMaxFruitDropCount fun(self: Item): number
+---@field getMinFruitDropCount fun(self: Item): number
 
 -- =========================================================
 -- TILE
@@ -303,6 +341,7 @@ DiscordBot = {}
 ---@field getRealName fun(self: Player): string
 ---@field getRealCleanName fun(self: Player): string
 ---@field sendRawPacket fun(self: Player, packet: string)
+---@field earnAchievement fun(self: Player, achievement_id: number)
 
 ---@class NPC : Player
 ---@field visualPunch fun(self: NPC, tile: Tile)
@@ -360,7 +399,6 @@ punishmentData = {}
 ---@field getTile fun(self: World, tileX: number, tileY: number): Tile
 ---@field useItemEffect fun(self: World, senderNetID: number, itemID: number, targetNetID: number, delay: number)
 ---@field setPlayerPosition fun(self: World, player: Player|NPC, posX: number, posY: number)---@field spawnGems fun(self: World, x: number, y: number, amount: number, player?: Player)
----@field kill fun(self: World, player: Player,spawnToMainDoor: 0|1)
 ---@field punchTile fun(self: World, tile: Tile)
 ---@field updateTile fun(self: World, tile: Tile)
 ---@field getVisiblePlayersCount fun(self: World): number
@@ -369,6 +407,7 @@ punishmentData = {}
 ---@field getSizeY fun(self: World): number
 ---@field setWeather fun(self: World, weatherID: number)
 ---@field isGameActive fun(self: World): boolean
+---@field getGuildID fun(self: World): number
 ---@field new fun(self: World, name: string, sizeX: number, sizeY: number, worldType: string)
 ---@field newFromTemplate fun(self: World, name: string, templateFile: string)
 ---@field save fun(self: World)
@@ -395,10 +434,113 @@ punishmentData = {}
 ---@field spawnGhost fun(self: World, tile: Tile, ghostType: number, userID_spawner: number, despawnIn: number,m_speed: number)
 ---@field getAllNPC fun(self: World): NPC[]
 ---@field placeTile fun(self: World, place_id: number, player?: Player)
+---@field kill fun(self: World, player: Player, respawn_on_door?: 0|1)
 
 -- =========================================================
 -- GLOBAL FUNCTIONS
 -- =========================================================
+
+---@class IncludedFile
+---@field name string -- the file path/name (without game/ or interface/ prefix)
+---@field url string -- the original URL the file was loaded from
+---@field size number -- file size in bytes
+---@field width number -- image width in pixels (for image files)
+---@field height number -- image height in pixels (for image files)
+---@field hash string -- texture hash identifier
+
+---@param url string -- the URL to load the file from
+---@param path string -- the destination path (valid paths: interface/ or game/)
+---@return IncludedFile -- the included file object with metadata
+function includeClientFile(url, path) end
+
+---@class Template
+---@field name string -- template name
+---@field created number -- timestamp when template was created
+---@field size number -- template size in bytes
+
+---@param templateName string -- name for the new template
+---@return boolean -- true if template was created successfully
+function createTemplate(templateName) end
+
+---@param templateName string -- name of the template to apply (e.g., "test.dat")
+---@return boolean -- true if template was applied successfully
+function applyTemplate(templateName) end
+
+---@return Template[]|nil -- array of templates or nil if failed
+function getTemplates() end
+
+---@param templateName string -- name of the template to check (e.g., "test.dat")
+---@return boolean -- true if template exists
+function hasTemplate(templateName) end
+
+---@param templateName string -- name of the template to delete (e.g., "test.dat")
+---@return boolean -- true if template was deleted successfully
+function deleteTemplate(templateName) end
+
+---@class ItemRegistry
+---@field id number -- valid range is from 21000 to 25000
+---@field effect_id number
+---@field editable_type number
+---@field item_category number
+---@field action_type number -- 17 = Foreground
+---@field name string
+---@field texture string
+---@field texture_hash string
+---@field item_kind number
+---@field texture_x number
+---@field texture_y number
+---@field collision_type number
+---@field extra_file string
+---@field break_hits number
+---@field reset_time number
+---@field grow_time number
+---@field clothing_type number
+---@field rarity number
+---@field description string
+---@field on_equip string
+---@field on_remove string
+---@field playmod string
+---@field chi string
+---@field is_farmable 0|1
+---@field hit_sound_type number
+---@field extra_options string
+---@field extra_options_2 string
+---@field punch_options string
+---@field audio_volume number
+---@field seed_base number
+---@field seed_overlay number
+---@field tree_base number
+---@field tree_leaves number
+---@field seed_color_r number
+---@field seed_color_g number
+---@field seed_color_b number
+---@field seed_color_a number
+---@field tree_color_r number
+---@field tree_color_g number
+---@field tree_color_b number
+---@field tree_color_a number
+
+---@param itemRegistry ItemRegistry
+function registerLuaItem(itemRegistry) end
+
+--- Reloads item data after modifications (setTexture, setName, etc.)
+--- Note: Clients must relogin to see changes to items
+function reloadItems() end
+
+---@param guild_id number
+---@return Guild|nil
+function getGuild(guild_id) end
+
+--- Reloads all configuration files (equivalent to /rc command)
+---@return boolean -- returns true if reload successful, false if reload failed due to file errors
+function reloadConfigs() end
+
+--- Gets all achievements on the server
+---@return any[] -- returns array of achievement objects
+function getAchievements() end
+
+---@param achievementData LuaAchievement
+function registerLuaAchievement(achievementData) end
 
 ---@param commandData CommandData
 function registerLuaCommand(commandData) end
@@ -518,6 +660,7 @@ function getPlaymods() end
 ---@field isBot fun(self: DiscordSlashStructure): boolean
 ---@field getParameter fun(self: DiscordSlashStructure, paramName: string): any
 ---@field reply fun(self: DiscordSlashStructure, message: string, components?: table|any, flags?: table|any, mentionUser?: 0|1): nil
+---@field dialog fun(self: DiscordSlashStructure, table:{id: string, title: string, components: table})
 
 ---@class DiscordButtonStruture
 ---@field getCustomID fun(self: DiscordButtonStruture): string
@@ -528,6 +671,7 @@ function getPlaymods() end
 ---@field getPlayer fun(self: DiscordButtonStruture): Player
 ---@field editOriginalResponse fun(self: DiscordButtonStruture, content: string, components?: table|any, flags?: table|any): nil
 ---@field isBot fun(self: DiscordButtonStruture): boolean
+---@field dialog fun(self: DiscordButtonStruture, table:{id: string, title: string, components: table})
 
 ---@class DiscordMessageStructure
 ---@field reply fun(self: DiscordMessageStructure, message: string, components?: table|any, flags?: table|any, mentionUser?: 0|1): nil
@@ -538,6 +682,20 @@ function getPlaymods() end
 ---@field getPlayer fun(self: DiscordMessageStructure): Player
 ---@field editOriginalResponse fun(self: DiscordMessageStructure, content: string, components?: table|0, flags?: table|0): nil
 ---@field isBot fun(self: DiscordMessageStructure): boolean
+---@field dialog fun(self: DiscordMessageStructure, table:{id: string, title: string, components: table})
+
+---@class DiscordFormSubmitStructure
+---@field reply fun(self: DiscordFormSubmitStructure, message: string, components?: table|any, flags?: table|any, mentionUser?: 0|1): nil
+---@field editOriginalResponse fun(self:DiscordFormSubmitStructure, content: string, components?: table|any, flags?: table|any): nil
+---@field getContent fun(self: DiscordFormSubmitStructure): string
+---@field getChannelID fun(self: DiscordFormSubmitStructure): string
+---@field getAuthorID fun(self: DiscordFormSubmitStructure): string
+---@field getPlayer fun(self:DiscordFormSubmitStructure): Player
+---@field editOriginalResponse fun(self: DiscordFormSubmitStructure, content: string, components?: table|0, flags?: table|0): nil
+---@field isBot fun(self: DiscordFormSubmitStructure): boolean
+---@field dialog fun(self: DiscordFormSubmitStructure, table:{id: string, title: string, components: table})
+---@field getValue fun(self: DiscordFormSubmitStructure, value: string)
+---@field getCustomID fun(self: DiscordFormSubmitStructure): string
 
 ---@param callback fun(e: DiscordButtonStruture): boolean|nil
 function onDiscordButtonClickCallback(callback) end
@@ -550,6 +708,9 @@ function onDiscordBotReadyCallback(callback) end
 
 ---@param callback fun(e: DiscordMessageStructure): boolean|nil
 function onDiscordMessageCreateCallback(callback) end
+
+--- @param callback fun(e: DiscordFormSubmitStructure): boolean|nil
+function onDiscordFormSubmitCallback(callback) end
 
 ---@param callback fun(player: Player): boolean|nil
 function onPlayerFirstTimeLoginCallback(callback) end
@@ -664,6 +825,9 @@ function onPlayerStartopiaCallback(callback) end
 
 ---@param callback fun(world: World, player: Player, itemID: number, itemCount: number)
 function onPlayerCookingCallback(callback) end
+
+---@param callback fun(world: World, player: Player, id: number): boolean|nil
+function onPlayerEarnAchievementCallback(callback) end
 
 ---@param callback fun(req): table({status: number, body: string, headers: table })
 function onHTTPRequest(callback) end
