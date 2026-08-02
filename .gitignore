@@ -10,8 +10,7 @@ scripts/NPC-SLAVE/*.lua
 twst*
 templates*
 
-workspace*
 scripts/example-kits.lua
-gtps_scripts/1/*.lua
+gtps_scripts*
 
 scripts/contributors

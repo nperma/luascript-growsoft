@@ -102,6 +102,7 @@ http = {}
 ---@class Bit
 ---@field band fun(any)
 ---@field lshift fun(any)
+---@field bnot fun(any)
 bit = {}
 
 -- =========================================================
@@ -167,6 +168,11 @@ bit = {}
 ---@field setFarmability fun(self: Item, is_farmable: boolean)
 ---@field getMaxFruitDropCount fun(self: Item): number
 ---@field getMinFruitDropCount fun(self: Item): number
+---@field getInfo fun(self: Item): string
+---@field getDescription fun(self: Item): string
+---@field getClothingType fun(self: Item): number
+---@field setClothingType fun(self: Item, type: number)
+---@field getPricedRarity fun(self: Item): number
 
 -- =========================================================
 -- TILE
@@ -832,6 +838,9 @@ function onPlayerEarnAchievementCallback(callback) end
 ---@param callback fun(req): table({status: number, body: string, headers: table })
 function onHTTPRequest(callback) end
 
+---@param callback fun(world: World,  tile: Tile, game_version: number, ref_player: Player): boolean|nil
+function onGetTileExtraDataCallback(callback) end
+
 -- =========================================================
 -- SERVER STORAGE
 -- =========================================================
@@ -867,6 +876,9 @@ function getServerName() end
 
 ---@return Player[]
 function getAllPlayers() end
+
+---@return World[]
+function getServerWorlds() end
 
 ---@return number
 function getMaxLevel() end
